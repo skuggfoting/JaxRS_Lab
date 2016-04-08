@@ -25,17 +25,17 @@ public final class TeamWebService {
 	@Context
 	private UriInfo uriInfo;
  
-//	@GET
-//	@Path("{id}")
-//	public TeamWeb getTeamWeb(@PathParam("id") Long id) {
-//
+	@GET
+	@Path("{id}")
+	public void getTeamWeb(@PathParam("id") Long id) {
+
 //		Team team = getBean(TeamService.class).findByName(id);
-//
+
 //		if (team == null) {
 //			throw new WebApplicationException(Status.NOT_FOUND);
 //		}
 //
 //		return new TeamWeb(team.getId(), team.getName(), team.getStatus());
-//	}
+	}
 
 }

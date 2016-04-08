@@ -10,8 +10,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @XmlRootElement
 public class WorkItemWeb {
 	
-	@XmlElement
-	private final Long id;
+//	@XmlElement
+//	private final Long id;
 	@XmlElement
 	private final String lable;
 	@XmlElement
@@ -20,47 +20,47 @@ public class WorkItemWeb {
 	private final String workItemNumber;
 	@XmlElement
 	private final String status;
-	@XmlElement(name = "IssueWeb")
-	@XmlElementWrapper(name = "issuesWeb")
-	private final IssueWeb issueWeb;
+//	@XmlElement(name = "IssueWeb")
+//	@XmlElementWrapper(name = "issuesWeb")
+//	private final IssueWeb issueWeb;
 
 	@SuppressWarnings("unused")
 	private WorkItemWeb() {
-		this(-1L,"","","","");
+		this("","","","");
 	}
 
-	public WorkItemWeb(Long id, String lable, String description, String workItemNumber, String status) {
-		this.id = id;
+	public WorkItemWeb(String lable, String description, String workItemNumber, String status) {
+//		this.id = id;
 		this.lable = lable;
 		this.description = description;
 		this.workItemNumber = workItemNumber;
 		this.status = status;
-		this.issueWeb = new IssueWeb();
+//		this.issueWeb = new IssueWeb();
 	}
 
-	public Long getId() {
-		return id;
-	}
+//	public Long getId() {
+//		return id;
+//	}
 
 	public String getLable() {
 		return lable;
 	}
 	
 	public String getDescription() {
-		return lable;
+		return description;
 	}
 	
 	public String getWorkItemNumber() {
-		return lable;
+		return workItemNumber;
 	}
 	
 	public String getStatus() {
 		return status;
 	}
 	
-	public IssueWeb getIssueWeb() {
-		return issueWeb;
-	}
+//	public IssueWeb getIssueWeb() {
+//		return issueWeb;
+//	}
 	
 //	public void setLable(String lable) {
 //		this.lable = lable;

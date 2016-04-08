@@ -45,6 +45,7 @@ CRUD Verb:
 */	
 	
 	// Create
+	// - Skapa en User
 	@POST
 	public Response addUser(UserWeb userWeb) {
 
@@ -58,11 +59,12 @@ CRUD Verb:
 	}
 	
 	// Read
+	// - Hämta en User baserat på user id
 	@GET
 	@Path("/userNumber/{userNumber}")
-	public UserWeb getUserByUserNumberWeb(@PathParam("userNumber") String userNumber) {
+	public UserWeb getByUserNumberWeb(@PathParam("userNumber") String userNumber) {
 
-		User user = getBean(UserService.class).findByUserNumber(userNumber);
+		User user = getBean(UserService.class).getByUserNumber(userNumber);
 
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -71,11 +73,12 @@ CRUD Verb:
 		return new UserWeb(user.getUsername(), user.getFirstName(), user.getLastName(), user.getUserNumber(), user.getStatus());
 	}
 	
+	// - Söka efter en User baserat på förnamn
 	@GET
 	@Path("/firstName/{firstName}")
-	public Collection<UserWeb> getUserByFirstNameWeb(@PathParam("firstName") String firstName) {
+	public Collection<UserWeb> getByFirstNameWeb(@PathParam("firstName") String firstName) {
 
-		Collection<User> user = getBean(UserService.class).findByFirstName(firstName);
+		Collection<User> user = getBean(UserService.class).getByFirstName(firstName);
 
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -88,11 +91,12 @@ CRUD Verb:
 		return userWeb;
 	}
 	
+	// - Söka efter en User baserat på efternamn
 	@GET
 	@Path("/lastName/{lastName}")
-	public Collection<UserWeb> getUserByLastNameWeb(@PathParam("lastName") String lastName) {
+	public Collection<UserWeb> getByLastNameWeb(@PathParam("lastName") String lastName) {
 
-		Collection<User> user = getBean(UserService.class).findByLastName(lastName);
+		Collection<User> user = getBean(UserService.class).getByLastName(lastName);
 
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -105,11 +109,12 @@ CRUD Verb:
 		return userWeb;
 	}
 	
+	// - Söka efter en User baserat på användarnamn
 	@GET
 	@Path("/username/{username}")
-	public UserWeb getUserByUsernameWeb(@PathParam("username") String username) {
+	public UserWeb getByUsernameWeb(@PathParam("username") String username) {
 
-		User user = getBean(UserService.class).findByUsername(username);
+		User user = getBean(UserService.class).getByUsername(username);
 
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -118,11 +123,12 @@ CRUD Verb:
 		return new UserWeb(user.getUsername(), user.getFirstName(), user.getLastName(), user.getUserNumber(), user.getStatus());
 	}
 
+	// - Hämta alla User som ingår i ett visst team
 	@GET
 	@Path("/team/{team}")
-	public Collection<UserWeb> getUserByTeamWeb(@PathParam("team") String team) {
+	public Collection<UserWeb> getByTeamWeb(@PathParam("team") String team) {
 
-		Collection<User> user = getBean(UserService.class).findUsersByTeam(team);
+		Collection<User> user = getBean(UserService.class).getUsersByTeam(team);
 
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -136,11 +142,12 @@ CRUD Verb:
 	}
 	
 	// Update
+	// - Uppdatera en User 
 	@PUT
 	@Path("/userNumber/{userNumber}")
-	public Response updateUser(@PathParam("userNumber") String userNumber, UserWeb userWeb) {
+	public Response update(@PathParam("userNumber") String userNumber, UserWeb userWeb) {
 			
-		User user = getBean(UserService.class).findByUserNumber(userNumber.toString());
+		User user = getBean(UserService.class).getByUserNumber(userNumber.toString());
 			
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -153,11 +160,12 @@ CRUD Verb:
 		return Response.noContent().build();
 	}
 	
+	// - Tilldela en work item till en User 
 	@PUT
 	@Path("/addWorkItem/{userNumber}")
 	public Response addWorkItem(@PathParam("userNumber") String userNumber, WorkItemWeb workItemWeb) {
 			
-		User user = getBean(UserService.class).findByUserNumber(userNumber.toString());
+		User user = getBean(UserService.class).getByUserNumber(userNumber.toString());
 			
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -173,11 +181,12 @@ CRUD Verb:
 	}
 
 	// Delete
+	// - Ta bort en User (inaktivera) 
 	@DELETE
 	@Path("/userNumber/{userNumber}")
-	public Response deleteUser(@PathParam("userNumber") String userNumber) {
+	public Response delete(@PathParam("userNumber") String userNumber) {
 		
-		User user = getBean(UserService.class).findByUserNumber(userNumber.toString());
+		User user = getBean(UserService.class).getByUserNumber(userNumber);
 		
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);

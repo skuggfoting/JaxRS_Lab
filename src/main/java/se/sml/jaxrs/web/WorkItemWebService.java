@@ -23,11 +23,12 @@ import javax.ws.rs.core.UriInfo;
 
 import se.sml.jaxrs.model.WorkItemWeb;
 import se.sml.sdj.model.WorkItem;
+import se.sml.sdj.service.UserService;
 import se.sml.sdj.service.WorkItemService;
 
 
 
-@Path("/users")
+@Path("/workItem")
 @Produces(MediaType.APPLICATION_XML)
 @Consumes(MediaType.APPLICATION_XML)
 public final class WorkItemWebService {
@@ -46,6 +47,7 @@ CRUD Verb:
 //	String lable, String description, String workItemNumber, String status
 	
 	// Create
+	// - Skapa en work item 
 	@POST
 	public Response addWorkItem(WorkItemWeb workItemWeb) {
 
@@ -53,143 +55,134 @@ CRUD Verb:
 		
 		getBean(WorkItemService.class).save(workItem);
 		
-		URI location = uriInfo.getAbsolutePathBuilder().path(getClass(), "getUserByWorkItemNumberWeb").build(workItemWeb.getWorkItemNumber());
+		URI location = uriInfo.getAbsolutePathBuilder().path(getClass(), "getByWorkItemNumberWeb").build(workItemWeb.getWorkItemNumber());
 
 		return Response.created(location).build();
 	}
-//	
-//	// Read
-//	@GET
-//	@Path("/userNumber/{userNumber}")
-//	public UserWeb getUserByUserNumberWeb(@PathParam("userNumber") String userNumber) {
-//
-//		WorkItem user = getBean(UserService.class).findByUserNumber(userNumber);
-//
-//		if (user == null) {
-//			throw new WebApplicationException(Status.NOT_FOUND);
-//		}
-//
-//		return new UserWeb(user.getUsername(), user.getFirstName(), user.getLastName(), user.getUserNumber(), user.getStatus());
-//	}
-//	
-//	@GET
-//	@Path("/firstName/{firstName}")
-//	public Collection<UserWeb> getUserByFirstNameWeb(@PathParam("firstName") String firstName) {
-//
-//		Collection<User> user = getBean(UserService.class).findByFirstName(firstName);
-//
-//		if (user == null) {
-//			throw new WebApplicationException(Status.NOT_FOUND);
-//		}
-//		
-//		Collection<UserWeb> userWeb = new ArrayList<UserWeb>();
-//		
-//		user.forEach(u -> userWeb.add(new UserWeb(u.getUsername(), u.getFirstName(), u.getLastName(), u.getUserNumber(), u.getStatus())));
-//
-//		return userWeb;
-//	}
-//	
-//	@GET
-//	@Path("/lastName/{lastName}")
-//	public Collection<UserWeb> getUserByLastNameWeb(@PathParam("lastName") String lastName) {
-//
-//		Collection<User> user = getBean(UserService.class).findByLastName(lastName);
-//
-//		if (user == null) {
-//			throw new WebApplicationException(Status.NOT_FOUND);
-//		}
-//		
-//		Collection<UserWeb> userWeb = new ArrayList<UserWeb>();
-//		
-//		user.forEach(u -> userWeb.add(new UserWeb(u.getUsername(), u.getFirstName(), u.getLastName(), u.getUserNumber(), u.getStatus())));
-//
-//		return userWeb;
-//	}
-//	
-//	@GET
-//	@Path("/username/{username}")
-//	public UserWeb getUserByUsernameWeb(@PathParam("username") String username) {
-//
-//		User user = getBean(UserService.class).findByUsername(username);
-//
-//		if (user == null) {
-//			throw new WebApplicationException(Status.NOT_FOUND);
-//		}
-//
-//		return new UserWeb(user.getUsername(), user.getFirstName(), user.getLastName(), user.getUserNumber(), user.getStatus());
-//	}
-//
-//	@GET
-//	@Path("/team/{team}")
-//	public Collection<UserWeb> getUserByTeamWeb(@PathParam("team") String team) {
-//
-//		Collection<User> user = getBean(UserService.class).findUsersByTeam(team);
-//
-//		if (user == null) {
-//			throw new WebApplicationException(Status.NOT_FOUND);
-//		}
-//		
-//		Collection<UserWeb> userWeb = new ArrayList<UserWeb>();
-//		
-//		user.forEach(u -> userWeb.add(new UserWeb(u.getUsername(), u.getFirstName(), u.getLastName(), u.getUserNumber(), u.getStatus())));
-//
-//		return userWeb;
-//	}
-//	
-//	// Update
-//	@PUT
-//	@Path("/userNumber/{userNumber}")
-//	public Response updateUser(@PathParam("userNumber") String userNumber, UserWeb userWeb) {
-//			
-//		User user = getBean(UserService.class).findByUserNumber(userNumber.toString());
-//			
-//		if (user == null) {
-//			throw new WebApplicationException(Status.NOT_FOUND);
-//		}
-//			
-//		user.setUsername(userWeb.getUsername()).setFirstName(userWeb.getFirstName()).setLastName(userWeb.getLastName()).setUserNumber(userWeb.getUserNumber()).setStatus(userWeb.getStatus());
-//			
-//		getBean(UserService.class).save(user);
-//			
-//		return Response.noContent().build();
-//	}
-//	
-//	@PUT
-//	@Path("/addWorkItem/{userNumber}")
-//	public Response addWorkItem(@PathParam("userNumber") String userNumber, WorkItemWeb workItemWeb) {
-//			
-//		User user = getBean(UserService.class).findByUserNumber(userNumber.toString());
-//			
-//		if (user == null) {
-//			throw new WebApplicationException(Status.NOT_FOUND);
-//		}
-//		
-//		WorkItem workItem = new WorkItem(workItemWeb.getLable(), workItemWeb.getDescription(), workItemWeb.getworkItemNumber(), workItemWeb.getStatus());
-//		user.addWorkItem(workItem);
-//			
-//		getBean(WorkItemService.class).save(workItem);
-//		getBean(UserService.class).save(user);
-//			
-//		return Response.noContent().build();
-//	}
-//
-//	// Delete
-//	@DELETE
-//	@Path("/userNumber/{userNumber}")
-//	public Response deleteUser(@PathParam("userNumber") String userNumber) {
-//		
-//		User user = getBean(UserService.class).findByUserNumber(userNumber.toString());
-//		
-//		if (user == null) {
-//			throw new WebApplicationException(Status.NOT_FOUND);
-//		}
-//		
-//		user.setStatus("Inactive");
-//		
-//		getBean(UserService.class).save(user);
-//		
-//		return Response.noContent().build();
-//	}
+	
+	// Read
+	@GET
+	@Path("/workItemNumber/{workItemNumber}")
+	public WorkItemWeb getByWorkItemNumberWeb(@PathParam("workItemNumber") String workItemNumber) {
+
+		WorkItem workItem = getBean(WorkItemService.class).getByWorkItemNumber(workItemNumber);
+
+		if (workItem == null) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+		
+		return new WorkItemWeb(workItem.getLable(), workItem.getDescription(), workItem.getWorkItemNumber(), workItem.getStatus());
+	}
+
+	// - Hämta alla work item baserat på status 
+	@GET
+	@Path("/status/{status}")
+	public Collection<WorkItemWeb> getByStatusWeb(@PathParam("status") String status) {
+
+		Collection<WorkItem> workItem = getBean(WorkItemService.class).getByStatus(status);
+
+		if (workItem == null) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+		
+		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
+		
+		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
+
+		return workItemWeb;
+	}
+	
+	// - Hämta alla work item för ett Team 
+	@GET
+	@Path("/team/{team}")
+	public Collection<WorkItemWeb> getByTeamWeb(@PathParam("team") String team) {
+
+		Collection<WorkItem> workItem = getBean(WorkItemService.class).getByTeam(team);
+
+		if (workItem == null) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+		
+		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
+		
+		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
+
+		return workItemWeb;
+	}
+	
+	// - Hämta alla work item för en User 
+	@GET
+	@Path("/user/{username}")
+	public Collection<WorkItemWeb> getByUserWeb(@PathParam("username") String username) {
+
+		Collection<WorkItem> workItem = getBean(UserService.class).getWorkItemsByUser(username);
+
+		if (workItem == null) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+		
+		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
+		
+		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
+
+		return workItemWeb;
+	}
+	
+	// - Hämta alla work item som innehåller en viss text i sin beskrivning
+	@GET
+	@Path("/descriptionContaining/{text}")
+	public Collection<WorkItemWeb> getByDescriptionContainingWeb(@PathParam("text") String text) {
+
+		Collection<WorkItem> workItem = getBean(WorkItemService.class).getByDescriptionContaining(text);
+
+		if (workItem == null) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+		
+		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
+		
+		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
+
+		return workItemWeb;
+	}
+	
+	// Update
+	// - Ändra status på en work item 
+	@PUT
+	@Path("/workItemNumber/{workItemNumber}")
+	public Response updateUser(@PathParam("workItemNumber") String workItemNumber, WorkItemWeb workItemWeb) {
+			
+		WorkItem workItem = getBean(WorkItemService.class).getByWorkItemNumber(workItemNumber);
+
+		if (workItem == null) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+			
+		workItem.setLable(workItemWeb.getLable()).setDescription(workItemWeb.getDescription()).setWorkItemNumber(workItemWeb.getWorkItemNumber()).setStatus(workItemWeb.getStatus());
+			
+		getBean(WorkItemService.class).save(workItem);
+			
+		return Response.noContent().build();
+	}
+
+	// Delete
+	// - Ta bort en work item (inaktivera) 
+	@DELETE
+	@Path("/workItemNumber/{workItemNumber}")
+	public Response deleteUser(@PathParam("workItemNumber") String workItemNumber) {
+		
+		WorkItem workItem = getBean(WorkItemService.class).getByWorkItemNumber(workItemNumber);
+		
+		if (workItem == null) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+		
+		workItem.setStatus("Inactive");
+		
+		getBean(WorkItemService.class).save(workItem);
+		
+		return Response.noContent().build();
+	}
 		
 }
 
