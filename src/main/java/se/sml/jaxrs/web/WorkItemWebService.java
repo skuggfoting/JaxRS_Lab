@@ -21,12 +21,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import se.sml.jaxrs.model.IssueWeb;
 import se.sml.jaxrs.model.WorkItemWeb;
+import se.sml.sdj.model.Issue;
 import se.sml.sdj.model.WorkItem;
 import se.sml.sdj.service.UserService;
 import se.sml.sdj.service.WorkItemService;
-
-
 
 @Path("/workItem")
 @Produces(MediaType.APPLICATION_XML)
@@ -36,33 +36,49 @@ public final class WorkItemWebService {
 	@Context
 	private UriInfo uriInfo;
 
-/*
-CRUD Verb:
-@POST		C
-@GET		R
-@PUT		U
-@DELETE		D
-*/	
+	/*
+	 * CRUD Verb:
+	 * @POST C
+	 * @GET R
+	 * @PUT U
+	 * @DELETE D
+	 */
+
 	
-//	String lable, String description, String workItemNumber, String status
-	
+	 
+//	- Lägga till en Issue till en work item 
+//	- Hämta alla work item som har en Issue
+
 	// Create
-	// - Skapa en work item 
+	// - Skapa en workItem
 	@POST
 	public Response addWorkItem(WorkItemWeb workItemWeb) {
 
 		WorkItem workItem = new WorkItem(workItemWeb.getLable(), workItemWeb.getDescription(), workItemWeb.getWorkItemNumber(), workItemWeb.getStatus());
-		
+
 		getBean(WorkItemService.class).save(workItem);
-		
+
 		URI location = uriInfo.getAbsolutePathBuilder().path(getClass(), "getByWorkItemNumberWeb").build(workItemWeb.getWorkItemNumber());
 
 		return Response.created(location).build();
 	}
-	
+
+	// - Skapa en Issue 
+	@POST
+	@Path("/addIssue/{workItemNumber}")
+	public Response addIssue(@PathParam("workItemNumber") String workItemNumber, IssueWeb issueWeb) {
+		Issue issue = new Issue(issueWeb.getIssue());
+		
+		getBean(WorkItemService.class).addIssue(workItemNumber, issue);
+		
+		URI location = uriInfo.getAbsolutePathBuilder().path(getClass(), "getByWorkItemNumberWeb").build(workItemNumber);
+		
+		return Response.created(location).build();
+	}
+
 	// Read
 	@GET
-	@Path("/workItemNumber/{workItemNumber}")
+	@Path("/getByWorkItemNumberWeb/{workItemNumber}")
 	public WorkItemWeb getByWorkItemNumberWeb(@PathParam("workItemNumber") String workItemNumber) {
 
 		WorkItem workItem = getBean(WorkItemService.class).getByWorkItemNumber(workItemNumber);
@@ -70,13 +86,13 @@ CRUD Verb:
 		if (workItem == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		
+
 		return new WorkItemWeb(workItem.getLable(), workItem.getDescription(), workItem.getWorkItemNumber(), workItem.getStatus());
 	}
 
-	// - Hämta alla work item baserat på status 
+	// - Hämta alla workItem baserat på status
 	@GET
-	@Path("/status/{status}")
+	@Path("/getByStatusWeb/{status}")
 	public Collection<WorkItemWeb> getByStatusWeb(@PathParam("status") String status) {
 
 		Collection<WorkItem> workItem = getBean(WorkItemService.class).getByStatus(status);
@@ -84,17 +100,17 @@ CRUD Verb:
 		if (workItem == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		
+
 		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
-		
+
 		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
 
 		return workItemWeb;
 	}
-	
-	// - Hämta alla work item för ett Team 
+
+	// - Hämta alla workItem för ett Team
 	@GET
-	@Path("/team/{team}")
+	@Path("/getByTeamWeb/{team}")
 	public Collection<WorkItemWeb> getByTeamWeb(@PathParam("team") String team) {
 
 		Collection<WorkItem> workItem = getBean(WorkItemService.class).getByTeam(team);
@@ -102,17 +118,17 @@ CRUD Verb:
 		if (workItem == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		
+
 		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
-		
+
 		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
 
 		return workItemWeb;
 	}
-	
-	// - Hämta alla work item för en User 
+
+	// - Hämta alla workItem för en User
 	@GET
-	@Path("/user/{username}")
+	@Path("/getByUserWeb/{username}")
 	public Collection<WorkItemWeb> getByUserWeb(@PathParam("username") String username) {
 
 		Collection<WorkItem> workItem = getBean(UserService.class).getWorkItemsByUser(username);
@@ -120,17 +136,17 @@ CRUD Verb:
 		if (workItem == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		
+
 		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
-		
+
 		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
 
 		return workItemWeb;
 	}
-	
-	// - Hämta alla work item som innehåller en viss text i sin beskrivning
+
+	// - Hämta alla workItem som innehåller en viss text i sin beskrivning
 	@GET
-	@Path("/descriptionContaining/{text}")
+	@Path("/getByDescriptionContainingWeb/{text}")
 	public Collection<WorkItemWeb> getByDescriptionContainingWeb(@PathParam("text") String text) {
 
 		Collection<WorkItem> workItem = getBean(WorkItemService.class).getByDescriptionContaining(text);
@@ -138,72 +154,63 @@ CRUD Verb:
 		if (workItem == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		
+
 		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
-		
+
 		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
 
 		return workItemWeb;
 	}
-	
+
 	// Update
-	// - Ändra status på en work item 
+	// - Ändra status på en work item
 	@PUT
-	@Path("/workItemNumber/{workItemNumber}")
+	@Path("/updateUser/{workItemNumber}")
 	public Response updateUser(@PathParam("workItemNumber") String workItemNumber, WorkItemWeb workItemWeb) {
-			
+
 		WorkItem workItem = getBean(WorkItemService.class).getByWorkItemNumber(workItemNumber);
 
 		if (workItem == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-			
-		workItem.setLable(workItemWeb.getLable()).setDescription(workItemWeb.getDescription()).setWorkItemNumber(workItemWeb.getWorkItemNumber()).setStatus(workItemWeb.getStatus());
-			
+
+		workItem.setLable(workItemWeb.getLable()).setDescription(workItemWeb.getDescription()).setWorkItemNumber(workItemWeb.getWorkItemNumber())
+				.setStatus(workItemWeb.getStatus());
+
 		getBean(WorkItemService.class).save(workItem);
-			
+
 		return Response.noContent().build();
 	}
+	
+	// - Uppdatera en Issue
+	@PUT
+	@Path("/updateIssue/{workItemNumber}")
+	public Response updateIssue(@PathParam("workItemNumber") String workItemNumber, IssueWeb issueWeb) {
 
+		Issue issue = new Issue(issueWeb.getIssue());
+		
+		getBean(WorkItemService.class).updateIssue(workItemNumber, issue);
+
+		return Response.noContent().build();
+	}
+	
 	// Delete
-	// - Ta bort en work item (inaktivera) 
+	// - Ta bort en work item (inaktivera)
 	@DELETE
-	@Path("/workItemNumber/{workItemNumber}")
+	@Path("/deleteUser/{workItemNumber}")
 	public Response deleteUser(@PathParam("workItemNumber") String workItemNumber) {
-		
+
 		WorkItem workItem = getBean(WorkItemService.class).getByWorkItemNumber(workItemNumber);
-		
+
 		if (workItem == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		
+
 		workItem.setStatus("Inactive");
-		
+
 		getBean(WorkItemService.class).save(workItem);
-		
+
 		return Response.noContent().build();
 	}
-		
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

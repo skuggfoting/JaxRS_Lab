@@ -14,8 +14,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class TeamWeb {
 	
 	@XmlElement
-	private final Long id;
-	@XmlElement
 	private final String name;
 	@XmlElement
 	private final String status;
@@ -25,19 +23,15 @@ public class TeamWeb {
 
 	@SuppressWarnings("unused")
 	private TeamWeb() {
-		this(-1L,"","");
+		this("","");
 	}
 
-	public TeamWeb(Long id, String name, String status) {
-		this.id = id;
+	public TeamWeb(String name, String status) {
 		this.name = name;
 		this.status = status;
 		this.usersWeb = new ArrayList<>();
 	}
 
-	public Long getId() {
-		return id;
-	}
 
 	public String getName() {
 		return name;

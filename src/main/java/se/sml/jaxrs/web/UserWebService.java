@@ -22,7 +22,6 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import se.sml.jaxrs.model.UserWeb;
-import se.sml.jaxrs.model.WorkItemWeb;
 import se.sml.sdj.model.User;
 import se.sml.sdj.model.WorkItem;
 import se.sml.sdj.service.UserService;
@@ -45,7 +44,7 @@ CRUD Verb:
 */	
 	
 	// Create
-	// - Skapa en User
+	// - Create User
 	@POST
 	public Response addUser(UserWeb userWeb) {
 
@@ -59,9 +58,9 @@ CRUD Verb:
 	}
 	
 	// Read
-	// - Hämta en User baserat på user id
+	// - Get User by userNumber
 	@GET
-	@Path("/userNumber/{userNumber}")
+	@Path("/getByUserNumberWeb/{userNumber}")
 	public UserWeb getByUserNumberWeb(@PathParam("userNumber") String userNumber) {
 
 		User user = getBean(UserService.class).getByUserNumber(userNumber);
@@ -73,9 +72,9 @@ CRUD Verb:
 		return new UserWeb(user.getUsername(), user.getFirstName(), user.getLastName(), user.getUserNumber(), user.getStatus());
 	}
 	
-	// - Söka efter en User baserat på förnamn
+	// - Get User by firstName
 	@GET
-	@Path("/firstName/{firstName}")
+	@Path("/getByFirstNameWeb/{firstName}")
 	public Collection<UserWeb> getByFirstNameWeb(@PathParam("firstName") String firstName) {
 
 		Collection<User> user = getBean(UserService.class).getByFirstName(firstName);
@@ -93,7 +92,7 @@ CRUD Verb:
 	
 	// - Söka efter en User baserat på efternamn
 	@GET
-	@Path("/lastName/{lastName}")
+	@Path("/getByLastNameWeb/{lastName}")
 	public Collection<UserWeb> getByLastNameWeb(@PathParam("lastName") String lastName) {
 
 		Collection<User> user = getBean(UserService.class).getByLastName(lastName);
@@ -111,7 +110,7 @@ CRUD Verb:
 	
 	// - Söka efter en User baserat på användarnamn
 	@GET
-	@Path("/username/{username}")
+	@Path("/getByUsernameWeb/{username}")
 	public UserWeb getByUsernameWeb(@PathParam("username") String username) {
 
 		User user = getBean(UserService.class).getByUsername(username);
@@ -125,7 +124,7 @@ CRUD Verb:
 
 	// - Hämta alla User som ingår i ett visst team
 	@GET
-	@Path("/team/{team}")
+	@Path("/getByTeamWeb/{team}")
 	public Collection<UserWeb> getByTeamWeb(@PathParam("team") String team) {
 
 		Collection<User> user = getBean(UserService.class).getUsersByTeam(team);
@@ -144,10 +143,10 @@ CRUD Verb:
 	// Update
 	// - Uppdatera en User 
 	@PUT
-	@Path("/userNumber/{userNumber}")
+	@Path("/update/{userNumber}")
 	public Response update(@PathParam("userNumber") String userNumber, UserWeb userWeb) {
 			
-		User user = getBean(UserService.class).getByUserNumber(userNumber.toString());
+		User user = getBean(UserService.class).getByUserNumber(userNumber);
 			
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -160,30 +159,25 @@ CRUD Verb:
 		return Response.noContent().build();
 	}
 	
-	// - Tilldela en work item till en User 
+	// Add a workItem to a User
 	@PUT
-	@Path("/addWorkItem/{userNumber}")
-	public Response addWorkItem(@PathParam("userNumber") String userNumber, WorkItemWeb workItemWeb) {
-			
-		User user = getBean(UserService.class).getByUserNumber(userNumber.toString());
-			
-		if (user == null) {
+	@Path("addWorkItem/{username}/{workItemNumber}")
+	public Response addWorkItem(@PathParam("username") String username, @PathParam("workItemNumber") String workItemNumber) {
+		
+		WorkItem workItem = getBean(WorkItemService.class).getByWorkItemNumber(workItemNumber);
+		
+		if (workItem == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 		
-		WorkItem workItem = new WorkItem(workItemWeb.getLable(), workItemWeb.getDescription(), workItemWeb.getWorkItemNumber(), workItemWeb.getStatus());
-		user.addWorkItem(workItem);
-			
-		getBean(WorkItemService.class).save(workItem);
-		getBean(UserService.class).save(user);
-			
+		getBean(UserService.class).addWorkItem(username, workItem);			
 		return Response.noContent().build();
 	}
 
 	// Delete
 	// - Ta bort en User (inaktivera) 
 	@DELETE
-	@Path("/userNumber/{userNumber}")
+	@Path("/delete/{userNumber}")
 	public Response delete(@PathParam("userNumber") String userNumber) {
 		
 		User user = getBean(UserService.class).getByUserNumber(userNumber);

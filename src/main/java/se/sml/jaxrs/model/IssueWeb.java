@@ -1,15 +1,15 @@
 package se.sml.jaxrs.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-@Embeddable
+@XmlRootElement
 public class IssueWeb {
 
-	@Column()
+	@XmlElement
 	private final String note;
 
 	IssueWeb() {
