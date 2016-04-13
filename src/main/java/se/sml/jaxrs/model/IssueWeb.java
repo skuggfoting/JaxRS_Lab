@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import se.sml.sdj.model.Issue;
+
 @XmlRootElement
 public class IssueWeb {
 
@@ -13,20 +15,16 @@ public class IssueWeb {
 	private final String note;
 
 	IssueWeb() {
-		this("");
+		this(null);
 	}
 
-	public IssueWeb(String note) {
-		this.note = note;
+	public IssueWeb(Issue issue) {
+		this.note = issue.getIssue();
 	}
 
 	public String getIssue() {
 		return note;
 	}
-
-//	public void setIssue(String note) {
-//		this.note = note;
-//	}
 
 	@Override
 	public String toString() {

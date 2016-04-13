@@ -1,16 +1,20 @@
 package se.sml.jaxrs.model;
 
+import static se.sml.jaxrs.model.parser.Parser.workItemParser;
+
+import java.util.Collection;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import se.sml.sdj.model.User;
+
 @XmlRootElement
 public final class UserWeb {
-	
-//	@XmlElement
-//	private final Long id;
+
 	@XmlElement
 	private final String username;
 	@XmlElement
@@ -21,28 +25,22 @@ public final class UserWeb {
 	private final String userNumber;
 	@XmlElement
 	private final String status;
-//	@XmlElement(name = "workItemWeb")
-//	@XmlElementWrapper(name = "workItemsWeb")
-//	private final Collection<WorkItemWeb> workItemsWeb;
+	@XmlElement
+	private final Collection<WorkItemWeb> workItems;
 
 	@SuppressWarnings("unused")
 	private UserWeb() {
-		this("","","","","");
+		this(null);
 	}
 
-	public UserWeb(String username, String firstName, String lastName, String userNumber, String status) {
-//		this.id = id;
-		this.username = username;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.userNumber = userNumber;
-		this.status = status;
-//		this.workItemsWeb = new ArrayList<>();
+	public UserWeb(User user) {
+		this.username = user.getUsername();
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+		this.userNumber = user.getFirstName();
+		this.status = user.getStatus();
+		this.workItems = workItemParser(user.getWorkItem());
 	}
-
-//	public Long getId() {
-//		return id;
-//	}
 
 	public String getUsername() {
 		return username;
@@ -60,38 +58,13 @@ public final class UserWeb {
 		return userNumber;
 	}
 
-//	public Collection<WorkItemWeb> getWorkItemWeb() {
-//		return workItemsWeb;
-//	}
+	public Collection<WorkItemWeb> getWorkItemWeb() {
+		return workItems;
+	}
 
 	public String getStatus() {
 		return status;
 	}
-//
-//	public void setUsername(String username) {
-//		this.username = username;
-//	}
-//
-//	public void setFirstName(String firstName) {
-//		this.firstName = firstName;
-//	}
-//
-//	public void setLastName(String lastName) {
-//		this.lastName = lastName;
-//	}
-//
-//	public void setUserNumber(String userNumber) {
-//		this.userNumber = userNumber;
-//	}
-//
-//	public User addWorkItem(WorkItem workItem) {
-//		workItems.add(workItem);
-//		return this;
-//	}
-//
-//	public void setStatus(String status) {
-//		this.status = status;
-//	}
 
 	@Override
 	public String toString() {

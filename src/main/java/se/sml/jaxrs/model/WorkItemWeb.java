@@ -6,11 +6,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import se.sml.sdj.model.WorkItem;
+
+import static se.sml.jaxrs.model.parser.Parser.issueParser;
+
 @XmlRootElement
 public class WorkItemWeb {
-	
-//	@XmlElement
-//	private final Long id;
+
 	@XmlElement
 	private final String lable;
 	@XmlElement
@@ -19,59 +21,41 @@ public class WorkItemWeb {
 	private final String workItemNumber;
 	@XmlElement
 	private final String status;
-//	@XmlElement(name = "IssueWeb")
-//	@XmlElementWrapper(name = "issuesWeb")
-//	private final IssueWeb issueWeb;
+	@XmlElement
+	private final IssueWeb issue;
 
 	@SuppressWarnings("unused")
 	private WorkItemWeb() {
-		this("","","","");
+		this(null);
 	}
 
-	public WorkItemWeb(String lable, String description, String workItemNumber, String status) {
-//		this.id = id;
-		this.lable = lable;
-		this.description = description;
-		this.workItemNumber = workItemNumber;
-		this.status = status;
-//		this.issueWeb = new IssueWeb();
+	public WorkItemWeb(WorkItem workItem) {
+		this.lable = workItem.getLable();
+		this.description = workItem.getDescription();
+		this.workItemNumber = workItem.getWorkItemNumber();
+		this.status = workItem.getStatus();
+		this.issue = issueParser(workItem.getIssue());
 	}
-
-//	public Long getId() {
-//		return id;
-//	}
 
 	public String getLable() {
 		return lable;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public String getWorkItemNumber() {
 		return workItemNumber;
 	}
-	
+
 	public String getStatus() {
 		return status;
 	}
-	
-//	public IssueWeb getIssueWeb() {
-//		return issueWeb;
-//	}
-	
-//	public void setLable(String lable) {
-//		this.lable = lable;
-//	}
-//
-//	public void setStatus(String status) {
-//		this.status = status;
-//	}
-//	
-//	public void addIssue(Issue issue) {
-//		this.issue = issue;
-//	}
+
+	public IssueWeb getIssueWeb() {
+		return issue;
+	}
 
 	@Override
 	public String toString() {

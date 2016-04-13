@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import se.sml.sdj.model.Team;
+
 @XmlRootElement
 public class TeamWeb {
 	
@@ -17,19 +19,19 @@ public class TeamWeb {
 	private final String name;
 	@XmlElement
 	private final String status;
-	@XmlElement(name = "userWeb")
-	@XmlElementWrapper(name = "usersWeb")
-	private final Collection<UserWeb> usersWeb;
+	@XmlElement(name = "user")
+	@XmlElementWrapper(name = "users")
+	private final Collection<UserWeb> users;
 
 	@SuppressWarnings("unused")
 	private TeamWeb() {
-		this("","");
+		this(null);
 	}
 
-	public TeamWeb(String name, String status) {
-		this.name = name;
-		this.status = status;
-		this.usersWeb = new ArrayList<>();
+	public TeamWeb(Team team) {
+		this.name = team.getName();
+		this.status = team.getStatus();
+		this.users = new ArrayList<>();
 	}
 
 
@@ -42,19 +44,11 @@ public class TeamWeb {
 	}
 
 	public Collection<UserWeb> getUsersWeb() {
-		return usersWeb;
+		return users;
 	}
 
-//	public void setName(String name) {
-//		this.name = name;
-//	}
-//
-//	public void setStatus(String status) {
-//		this.status = status;
-//	}
-
 	public void addUserWeb(UserWeb userWeb) {
-		usersWeb.add(userWeb);
+		users.add(userWeb);
 	}
 
 	@Override

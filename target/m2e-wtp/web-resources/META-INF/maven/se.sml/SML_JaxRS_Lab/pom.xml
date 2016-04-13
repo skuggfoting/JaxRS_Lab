@@ -64,7 +64,12 @@
 
 	<dependencies>
 
-
+		<!-- Simple XML Library -->
+		<dependency>
+			<groupId>com.io7m.xom</groupId>
+			<artifactId>xom</artifactId>
+			<version>1.2.10</version>
+		</dependency>
 
 		<!-- JAX-RS (Jersey) -->
 		<dependency>

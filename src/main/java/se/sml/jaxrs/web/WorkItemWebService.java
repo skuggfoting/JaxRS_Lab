@@ -36,21 +36,8 @@ public final class WorkItemWebService {
 	@Context
 	private UriInfo uriInfo;
 
-	/*
-	 * CRUD Verb:
-	 * @POST C
-	 * @GET R
-	 * @PUT U
-	 * @DELETE D
-	 */
-
-	
-	 
-//	- Lägga till en Issue till en work item 
-//	- Hämta alla work item som har en Issue
-
 	// Create
-	// - Skapa en workItem
+	// - Create workItem
 	@POST
 	public Response addWorkItem(WorkItemWeb workItemWeb) {
 
@@ -63,20 +50,21 @@ public final class WorkItemWebService {
 		return Response.created(location).build();
 	}
 
-	// - Skapa en Issue 
+	// - Create Issue
 	@POST
 	@Path("/addIssue/{workItemNumber}")
 	public Response addIssue(@PathParam("workItemNumber") String workItemNumber, IssueWeb issueWeb) {
 		Issue issue = new Issue(issueWeb.getIssue());
-		
+
 		getBean(WorkItemService.class).addIssue(workItemNumber, issue);
-		
+
 		URI location = uriInfo.getAbsolutePathBuilder().path(getClass(), "getByWorkItemNumberWeb").build(workItemNumber);
-		
+
 		return Response.created(location).build();
 	}
 
 	// Read
+	// - Get by workItemNumber
 	@GET
 	@Path("/getByWorkItemNumberWeb/{workItemNumber}")
 	public WorkItemWeb getByWorkItemNumberWeb(@PathParam("workItemNumber") String workItemNumber) {
@@ -87,10 +75,10 @@ public final class WorkItemWebService {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
-		return new WorkItemWeb(workItem.getLable(), workItem.getDescription(), workItem.getWorkItemNumber(), workItem.getStatus());
+		return new WorkItemWeb(workItem);
 	}
 
-	// - Hämta alla workItem baserat på status
+	// - Get by status
 	@GET
 	@Path("/getByStatusWeb/{status}")
 	public Collection<WorkItemWeb> getByStatusWeb(@PathParam("status") String status) {
@@ -103,12 +91,12 @@ public final class WorkItemWebService {
 
 		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
 
-		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
+		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi)));
 
 		return workItemWeb;
 	}
 
-	// - Hämta alla workItem för ett Team
+	// - Get all WorkItem for specified Team
 	@GET
 	@Path("/getByTeamWeb/{team}")
 	public Collection<WorkItemWeb> getByTeamWeb(@PathParam("team") String team) {
@@ -121,12 +109,12 @@ public final class WorkItemWebService {
 
 		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
 
-		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
+		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi)));
 
 		return workItemWeb;
 	}
 
-	// - Hämta alla workItem för en User
+	// - Get all WorkItem for specific User
 	@GET
 	@Path("/getByUserWeb/{username}")
 	public Collection<WorkItemWeb> getByUserWeb(@PathParam("username") String username) {
@@ -139,12 +127,12 @@ public final class WorkItemWebService {
 
 		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
 
-		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
+		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi)));
 
 		return workItemWeb;
 	}
 
-	// - Hämta alla workItem som innehåller en viss text i sin beskrivning
+	// - Get all WorkItem containing specified description
 	@GET
 	@Path("/getByDescriptionContainingWeb/{text}")
 	public Collection<WorkItemWeb> getByDescriptionContainingWeb(@PathParam("text") String text) {
@@ -157,13 +145,13 @@ public final class WorkItemWebService {
 
 		Collection<WorkItemWeb> workItemWeb = new ArrayList<WorkItemWeb>();
 
-		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi.getLable(), wi.getDescription(), wi.getWorkItemNumber(), wi.getStatus())));
+		workItem.forEach(wi -> workItemWeb.add(new WorkItemWeb(wi)));
 
 		return workItemWeb;
 	}
 
 	// Update
-	// - Ändra status på en work item
+	// - Update Status
 	@PUT
 	@Path("/updateUser/{workItemNumber}")
 	public Response updateUser(@PathParam("workItemNumber") String workItemNumber, WorkItemWeb workItemWeb) {
@@ -181,21 +169,21 @@ public final class WorkItemWebService {
 
 		return Response.noContent().build();
 	}
-	
-	// - Uppdatera en Issue
+
+	// - Update Issue
 	@PUT
 	@Path("/updateIssue/{workItemNumber}")
 	public Response updateIssue(@PathParam("workItemNumber") String workItemNumber, IssueWeb issueWeb) {
 
 		Issue issue = new Issue(issueWeb.getIssue());
-		
+
 		getBean(WorkItemService.class).updateIssue(workItemNumber, issue);
 
 		return Response.noContent().build();
 	}
-	
+
 	// Delete
-	// - Ta bort en work item (inaktivera)
+	// - Delete WorkItem (inactivate)
 	@DELETE
 	@Path("/deleteUser/{workItemNumber}")
 	public Response deleteUser(@PathParam("workItemNumber") String workItemNumber) {

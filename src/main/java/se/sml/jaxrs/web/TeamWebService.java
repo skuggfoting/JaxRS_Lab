@@ -35,7 +35,7 @@ public final class TeamWebService {
 
 	@Context
 	private UriInfo uriInfo;
- 
+
 	// Create a Team
 	@POST
 	public Response addTeam(TeamWeb teamWeb) {
@@ -44,7 +44,7 @@ public final class TeamWebService {
 		URI location = uriInfo.getAbsolutePathBuilder().path(getClass(), "getTeamByTeamNameWeb").build(teamWeb.getName());
 		return Response.created(location).build();
 	}
-	
+
 	// Get a Team by Team Name
 	@GET
 	@Path("/getTeamByTeamNameWeb/{teamName}")
@@ -53,9 +53,9 @@ public final class TeamWebService {
 		if (team == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		return new TeamWeb(team.getName(), team.getStatus()); 
+		return new TeamWeb(team);
 	}
-	
+
 	// Get All Teams
 	@GET
 	@Path("/all")
@@ -66,12 +66,16 @@ public final class TeamWebService {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 		Collection<TeamWeb> teamWebResult = new ArrayList<>();
-		teamResult.forEach(tr -> teamWebResult.add(new TeamWeb(tr.getName(), tr.getStatus())));
-		GenericEntity<Collection<TeamWeb>> entity = new GenericEntity<Collection<TeamWeb>>(teamWebResult) {};
+		teamResult.forEach(tr -> teamWebResult.add(new TeamWeb(tr)));
+
+		/// FRÅGA ANDERS: VAD FAN ÄR GREJEN MED "GenericEntity". Fattar inte
+		/// syftet. Varför inte bara skriva "return teamWebResult"
+		GenericEntity<Collection<TeamWeb>> entity = new GenericEntity<Collection<TeamWeb>>(teamWebResult) {
+		};
 		return Response.ok(entity).build();
 
 	}
-	
+
 	// Update a Team
 	@PUT
 	@Path("/updateUser/{teamName}")
@@ -93,10 +97,10 @@ public final class TeamWebService {
 		if (user == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		getBean(TeamService.class).addUser(teamName, user);			
+		getBean(TeamService.class).addUser(teamName, user);
 		return Response.noContent().build();
 	}
-	
+
 	// Delete a Team [update status to "Inactive"]
 	@DELETE
 	@Path("/teamName/{teamName}")
