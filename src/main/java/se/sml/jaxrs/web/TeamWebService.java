@@ -56,7 +56,7 @@ public final class TeamWebService {
 		return new TeamWeb(team);
 	}
 
-	// Get All Teams
+	// Get All Teams  (/all behövs ej)
 	@GET
 	@Path("/all")
 	public Response getAllTeams() {
@@ -101,7 +101,7 @@ public final class TeamWebService {
 		return Response.noContent().build();
 	}
 
-	// Delete a Team [update status to "Inactive"]
+	// Delete a Team (update status to "Inactive")
 	@DELETE
 	@Path("/teamName/{teamName}")
 	public Response deleteTeam(@PathParam("teamName") String teamName) {

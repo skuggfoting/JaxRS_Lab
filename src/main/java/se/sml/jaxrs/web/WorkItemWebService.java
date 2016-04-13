@@ -183,7 +183,7 @@ public final class WorkItemWebService {
 	}
 
 	// Delete
-	// - Delete WorkItem (inactivate)
+	// - Delete WorkItem (update status to "Inactive")
 	@DELETE
 	@Path("/deleteUser/{workItemNumber}")
 	public Response deleteUser(@PathParam("workItemNumber") String workItemNumber) {

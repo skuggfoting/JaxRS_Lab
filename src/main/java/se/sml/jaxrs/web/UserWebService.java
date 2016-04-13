@@ -50,7 +50,7 @@ public final class UserWebService {
 	}
 
 	// Read
-	// - Get User by userNumber
+	// - Get User by userNumber ta bort getByUserNumberWeb
 	@GET
 	@Path("/getByUserNumberWeb/{userNumber}")
 	public UserWeb getByUserNumberWeb(@PathParam("userNumber") String userNumber) {
@@ -114,6 +114,8 @@ public final class UserWebService {
 		return new UserWeb(user);
 	}
 
+	
+	//Querry parameter
 	// - Get all Users from specified Team
 	@GET
 	@Path("/getByTeamWeb/{team}")
@@ -133,7 +135,7 @@ public final class UserWebService {
 	}
 
 	// Update
-	// - Update User
+	// - Update User  bort med /update/
 	@PUT
 	@Path("/update/{userNumber}")
 	public Response update(@PathParam("userNumber") String userNumber, UserWeb userWeb) {
@@ -152,7 +154,7 @@ public final class UserWebService {
 		return Response.noContent().build();
 	}
 
-	// Add a workItem to a User
+	// Add a workItem to a User /userNumber/workItems   restful urls
 	@PUT
 	@Path("addWorkItem/{username}/{workItemNumber}")
 	public Response addWorkItem(@PathParam("username") String username, @PathParam("workItemNumber") String workItemNumber) {
@@ -173,7 +175,7 @@ public final class UserWebService {
 	}
 
 	// Delete
-	// - Delete User (inactivate)
+	// - Delete User (update status to "Inactive")
 	@DELETE
 	@Path("/delete/{userNumber}")
 	public Response delete(@PathParam("userNumber") String userNumber) {
